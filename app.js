@@ -8,8 +8,10 @@ const app = express()
 const dotenv = require('dotenv')
 dotenv.config();
 const studentRouter = require('./routes/student')
+require('./config/DBConfig')   //importing database connection
 
-app.use(express.json())  //server consumes or produces json object
+
+app.use(express.json())  
 
 
 app.use("/student", studentRouter);

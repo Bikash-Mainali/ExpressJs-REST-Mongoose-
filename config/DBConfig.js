@@ -3,28 +3,12 @@
 //  */
 
 "use strict";
-const { MongoClient } = require('mongodb');  //mongodb driver
-
-let client = null;
 const dbConfig = (function () {
-
-  const getDb = () => {
-    client = new MongoClient(process.env.ATLAS_URI);
-    client.connect();
-    const database = client.db('student_express_mongo');
-    return database;
-  }
-
-  const getClient = () => {
-    getDb();
-    return client;
-  }
-
-  return {
-    getDb: getDb,
-    getClient: getClient
-  }
-
+  const mongoose = require('mongoose')
+  mongoose.connect(process.env.ATLAS_URI, { useNewUrlParser: true })
+  const db = mongoose.connection
+  db.on('error', (error) => console.error(error))
+  db.once('open', () => console.log('Connected to Database'))
 })()
 
 module.exports = dbConfig;
