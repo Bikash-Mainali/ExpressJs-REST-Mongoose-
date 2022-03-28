@@ -5,46 +5,51 @@
 "use script";
 const express = require("express");
 const student = require("../models/student");
+const bcrypt = require("bcryptjs");
 const app = express();
 const studentRouter = express.Router();
 const Student = require("../models/student")
+const User = require("../models/user")
+const jwt = require("jsonwebtoken")
+const { ACCESSS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = process.env
+const authenticateToken = require("../middleware/auth")
 
 // Getting all
-studentRouter.get('/', async function (req, res) {
-    try {
-        const students = await Student.find()
-        res.status(200).json(students);
-    }
-    catch (error) {
-        res.status(500).json({ message: error.message })
-    }
+studentRouter.get('/', authenticateToken, async function (req, res) {
+  try {
+    const students = await Student.find({});
+    res.status(200).json(students);
+  }
+  catch (error) {
+    res.status(500).json({ message: error.message })
+  }
 })
 
 
 // Getting one
-studentRouter.get('/:id', getStudent, async function (req, res) {
-    try {
-        res.status(200).json(res.student);
-    }
-    catch (error) {
-        res.status(500).json({ message: error.message })
-    }
+studentRouter.get('/:id', authenticateToken, getStudent, async function (req, res) {
+  try {
+    res.status(200).json(res.student);
+  }
+  catch (error) {
+    res.status(500).json({ message: error.message })
+  }
 })
 
 // Creating one
-studentRouter.post('/', async (req, res) => {
-    try {
+studentRouter.post('/', authenticateToken, async (req, res) => {
+  try {
     const student = new Student({
-        studentId: req.body.studentId,
-        fullName: req.body.fullName,
-        age: req.body.age,
-        email: req.body.email,
-        hobbies: req.body.hobbies,
-        dateOfBirth: req.body.dateOfBirth,
-        createdAt: req.body.createdAt,
-        updatedAt: req.body.updatedAt,
-        address: req.body.address,
-        degree: req.body.degree
+      studentId: req.body.studentId,
+      fullName: req.body.fullName,
+      age: req.body.age,
+      email: req.body.email,
+      hobbies: req.body.hobbies,
+      dateOfBirth: req.body.dateOfBirth,
+      createdAt: req.body.createdAt,
+      updatedAt: req.body.updatedAt,
+      address: req.body.address,
+      degree: req.body.degree
     })
     const newStudent = await student.save()
     /*  //alternative
@@ -65,7 +70,7 @@ studentRouter.post('/', async (req, res) => {
 
 
 // Updating One
-studentRouter.patch('/:id', getStudent, async (req, res) => {
+studentRouter.patch('/:id', authenticateToken, getStudent, async (req, res) => {
   if (req.body.fullName != null) {
     res.student.fullName = req.body.fullName
   }
@@ -101,39 +106,39 @@ studentRouter.patch('/:id', getStudent, async (req, res) => {
 
     res.student.degree = req.body.degree
   }
-    try {
-      const updatedStudent = await res.student.save()
-      res.json(updatedStudent)
-    } catch (err) {
-      res.status(400).json({ message: err.message })
-    }
-  })
-
-
-  // Deleting One
-  studentRouter.delete('/:id', getStudent, async (req, res) => {
-    try {
-      await res.student.remove()
-      res.json({ message: 'Deleted Student' })
-    } catch (err) {
-      res.status(500).json({ message: err.message })
-    }
-  })
-
-
-  async function getStudent(req, res, next) {
-    let student
-    try {
-      student = await Student.findById(req.params.id)
-      if (student == null) {
-        return res.status(404).json({ message: 'Cannot find student' })
-      }
-    } catch (err) {
-      return res.status(500).json({ message: err.message })
-    }
-    res.student = student
-    next()
+  try {
+    const updatedStudent = await res.student.save()
+    res.json(updatedStudent)
+  } catch (err) {
+    res.status(400).json({ message: err.message })
   }
+})
+
+
+// Deleting One
+studentRouter.delete('/:id', authenticateToken, getStudent, async (req, res) => {
+  try {
+    await res.student.remove()
+    res.json({ message: 'Deleted Student' })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+
+async function getStudent(req, res, next) {
+  let student
+  try {
+    student = await Student.findById(req.params.id)
+    if (student == null) {
+      return res.status(404).json({ message: 'Cannot find student' })
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message })
+  }
+  res.student = student
+  next()
+}
 
 
 module.exports = studentRouter;

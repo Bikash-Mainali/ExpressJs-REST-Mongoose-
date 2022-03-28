@@ -1,11 +1,78 @@
 GET http://localhost:4000/student
 
 ###
+GET http://localhost:4000/student/623f94b7504ecbf87c190f8a
+
+
+###
+POST http://localhost:4000/student/login 
+Content-Type: application/json
+
+{
+    "username": "Biki"
+}
+
+###
 POST http://localhost:4000/student
 Content-Type: : application/json
 {
-    "studentId": 123123,
-    "fullName": "Bikash Mainali",
-    "dateOfBirth": 2021-02-31,
-    "address": "Nepal"
+    "studentId":12,
+    "fullName": "biddki mainali",
+    "age": 12,
+    "email": "bmaidsnasli@gmaill.co",
+    "hobbies": [
+        "spodrts",
+        "musidc"
+    ],
+    "dateOfBirth": 200,
+    "address": {
+        "city": "Fairfield",
+        "Street": "1000 N 4th St"
+    },
+    "degree": {
+            "graduate": {
+                "isGraduated": true,
+                "passedYear": 2021,
+                "cgpa": 3.5
+            },
+            "undergraduate": {
+                "isGraduated": true,
+                "passedYear": 2022,
+                "cgpa": 3.0
+            }
+        }
+    
 }
+
+###
+PATCH http://localhost:4000/student/623f94b7504ecbf87c190f8a
+Content-Type: : application/json
+
+ {
+        "address": {
+            "city": "Fairfield"
+        },
+        "fullName": "tttttt mainali",
+        "age": 12,
+        "email": "asdfasdfasdfafds@gmail.com",
+        "createdAt": "2022-03-25T21:57:15.319Z",
+        "updatedAt": "2022-03-25T21:57:15.319Z",
+        "dateOfBirth": "1970-01-01T00:00:00.200Z",
+        "hobbies": [
+            "spodrts",
+            "musidc"
+        ],
+        "degree": {
+            "undergraduate": {
+                "passedYear": "1970-01-01T00:00:02.022Z",
+                "cgpa": 3
+            },
+            "graduate": {
+                "passedYear": "1970-01-01T00:00:02.021Z",
+                "cgpa": 3.5
+            }
+        }
+    }
+
+###
+DELETE http://localhost:4000/student/623f94b7504ecbf87c190f8a

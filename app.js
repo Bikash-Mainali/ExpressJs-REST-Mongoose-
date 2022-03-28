@@ -8,12 +8,15 @@ const app = express()
 const dotenv = require('dotenv')
 dotenv.config();
 const studentRouter = require('./routes/student')
+const authRouter = require('./routes/auth')
 require('./config/DBConfig')   //importing database connection
+const { PORT } = process.env
 
 
 app.use(express.json())  
 
 
+app.use("/user", authRouter)
 app.use("/student", studentRouter);
 
 // error handling middleware
@@ -30,6 +33,8 @@ app.use((req, res, next) => {
 
 
 
-app.listen(4000, () => {
-    console.log(`server started`)
+app.listen(PORT, () => {
+    console.log(`server listening on port ${PORT}`)
 })
+
+console.log("server started running")
